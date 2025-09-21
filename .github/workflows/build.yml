@@ -1,0 +1,35 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake build-essential libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+    
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+    
+    - name: Build
+      run: |
+        cd build
+        make -j$(nproc)
+    
+    - name: Test executable exists
+      run: |
+        test -f build/slither
+        echo "✅ Build successful!"
